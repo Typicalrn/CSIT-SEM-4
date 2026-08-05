@@ -1,0 +1,31 @@
+{
+    "version": 1,
+    "author": "Aryan Mahajran",
+    "editor": "wokwi",
+    "parts": [
+        {
+            "type" : "wokwi-esp32-devkit-v1",
+            "id" : "esp",
+            "top": 0,
+            "left": 0
+        },
+        {
+            "type" : "wokwi-led",
+            "id" : "led1",
+            "top": -120,
+            "left": 180
+        },
+        {
+            "type": "wokwi-resistor",
+            "id": "resistor1",
+            "top": -50,
+            "left": 120,
+            "value": "220"
+        }
+    ],
+    "connections": [
+        ["esp:GND.2", "led1:C", "black", ["v0"]],
+        ["esp:D4", "resistor1:1", "red", ["v0"]],
+        ["led1:A", "resistor1:2", "red", ["v0"]]
+    ]
+}
