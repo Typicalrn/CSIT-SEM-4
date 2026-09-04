@@ -1,4 +1,4 @@
--- 1. Create Member Table
+-- LibraryDB - Concise Version
 CREATE TABLE Member (
     Member_ID INT PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
@@ -7,7 +7,6 @@ CREATE TABLE Member (
     Date_of_Membership DATE NOT NULL
 );
 
--- 2. Create Book Table
 CREATE TABLE Book (
     Book_ID INT PRIMARY KEY,
     Title VARCHAR(150) NOT NULL,
@@ -16,14 +15,12 @@ CREATE TABLE Book (
     Price DECIMAL(10, 2) CHECK (Price >= 0)
 );
 
--- 3. Create Author Table
 CREATE TABLE Author (
     Author_ID INT PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     Nationality VARCHAR(50)
 );
 
--- 4. Create Book_Author Junction Table
 CREATE TABLE Book_Author (
     Book_ID INT,
     Author_ID INT,
@@ -32,7 +29,6 @@ CREATE TABLE Book_Author (
     FOREIGN KEY (Author_ID) REFERENCES Author(Author_ID) ON DELETE CASCADE
 );
 
--- 5. Create Borrow Table
 CREATE TABLE Borrow (
     Borrow_ID INT PRIMARY KEY,
     Member_ID INT NOT NULL,
@@ -44,7 +40,6 @@ CREATE TABLE Borrow (
     FOREIGN KEY (Book_ID) REFERENCES Book(Book_ID) ON DELETE CASCADE
 );
 
--- Insert Sample Data
 INSERT INTO Member VALUES
 (1, 'Aarav Sharma', 'Kathmandu', '9841000001', '2025-01-10'),
 (2, 'Sita Thapa', 'Lalitpur', '9841000002', '2025-02-15'),
@@ -59,42 +54,33 @@ INSERT INTO Author VALUES
 (201, 'Abraham Silberschatz', 'American'),
 (202, 'Thomas H. Cormen', 'American');
 
-INSERT INTO Book_Author VALUES
-(101, 201),
-(102, 201),
-(103, 202);
+INSERT INTO Book_Author VALUES (101, 201), (102, 201), (103, 202);
 
 INSERT INTO Borrow VALUES
 (1, 1, 101, '2026-03-01', '2026-03-15', '2026-03-14'),
 (2, 1, 103, '2026-03-10', '2026-03-24', NULL),
 (3, 2, 101, '2026-03-12', '2026-03-26', NULL);
 
---c
-SELECT Title, Publication_Year, Price
-FROM Book
-WHERE Price > 1000
-ORDER BY Title ASC;
+-- Query c: Books with Price > 1000
+SELECT Title, Publication_Year, Price FROM Book WHERE Price > 1000 ORDER BY Title ASC;
 
---d
-SELECT name, title, issue_date, due_date FROM Book
-JOIN Borrow ON Book.book_id = Borrow.book_id
-JOIN Member ON Member.member_id = Borrow.member_id;
+-- Query d: Borrowed Books with Member Details
+SELECT Name, Title, Issue_Date, Due_Date FROM Book
+JOIN Borrow ON Book.Book_ID = Borrow.Book_ID
+JOIN Member ON Member.Member_ID = Borrow.Member_ID;
 
---e
-SELECT title, name FROM Book B 
-JOIN Book_Author BA ON B.book_id = BA.book_id 
-JOIN Author A ON BA.author_id = A.author_id;
+-- Query e: Books with Authors
+SELECT Title, Name FROM Book B
+JOIN Book_Author BA ON B.Book_ID = BA.Book_ID
+JOIN Author A ON BA.Author_ID = A.Author_ID;
 
---f
-SELECT Member.name, Book.title 
-FROM Borrow
-JOIN Member ON Borrow.member_id = Member.member_id
-JOIN Book ON Borrow.book_id = Book.book_id
-WHERE Borrow.return_date IS NULL;
+-- Query f: Currently Borrowed Books (Not Returned)
+SELECT Member.Name, Book.Title FROM Borrow
+JOIN Member ON Borrow.Member_ID = Member.Member_ID
+JOIN Book ON Borrow.Book_ID = Book.Book_ID
+WHERE Borrow.Return_Date IS NULL;
 
---g
-SELECT Member.name, COUNT(Borrow.book_id)
-FROM Member
-JOIN Borrow ON Member.member_id = Borrow.member_id
-GROUP BY Member.member_id, Member.name
-HAVING COUNT(Borrow.book_id) > 1;
+-- Query g: Members with More Than 1 Borrow
+SELECT Member.Name, COUNT(Borrow.Book_ID) FROM Member
+JOIN Borrow ON Member.Member_ID = Borrow.Member_ID
+GROUP BY Member.Member_ID, Member.Name HAVING COUNT(Borrow.Book_ID) > 1;
